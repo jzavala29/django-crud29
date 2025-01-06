@@ -1,0 +1,112 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Realizar Reporte</h3>
+    <form action="/guardarReporte/" method="post" id="frm_nuevo_reporte">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_estudiante" class="form-label"><b>Estudiante:</b></label>
+            <select class="form-control" name="estudiante" id="id_estudiante" required>
+                <option value="">Seleccione un Estudiante</option>
+                {% for estudiante in estudiantes %}
+                    <option value="{{ estudiante.id }}">{{ estudiante.nombre }} {{ estudiante.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_clase" class="form-label"><b>Clase:</b></label>
+            <select class="form-control" name="clase" id="id_clase" required>
+                <option value="">Seleccione una Clase</option>
+                {% for clase in clases %}
+                    <option value="{{ clase.id }}">{{ clase.nombre }} </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_calificaciones" class="form-label"><b>Calificaciones:</b></label>
+            <!-- Cambio 1: Agregar multiple y cambiar name a calificaciones[] -->
+            <select class="form-control" name="calificaciones[]" id="id_calificaciones" multiple required>
+                <option value="">Seleccione Calificaciones</option>
+                {% for calificacion in calificaciones %}
+                <!-- Cambio 2: Corregir la duplicación de nombre y mostrar tarea y nota -->
+                <option value="{{ calificacion.id }}">{{ calificacion.tarea }} - {{ calificacion.nota }}</option>
+                {% endfor %}
+            </select>
+            <!-- Cambio 3: Agregar nota informativa -->
+            <small class="text-muted">Mantenga presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples calificaciones</small>
+        </div>
+
+        <center>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a href="/listaReportes/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // El resto del código JavaScript permanece igual hasta la parte del cambio de clase
+        $('#id_clase').change(function () {
+            var estudianteId = $('#id_estudiante').val();
+            var claseId = $(this).val();
+            
+            if (estudianteId && claseId) {
+                $.get('/obtener_calificaciones_por_estudiante_y_clase/', { 'estudiante_id': estudianteId, 'clase_id': claseId }, function (data) {
+                    if (data.calificaciones) {
+                        $('#id_calificaciones').empty().append('<option value="">Seleccione Calificaciones</option>');
+                        $.each(data.calificaciones, function (i, calificacion) {
+                            // Cambio 4: Asegurar que se muestre la tarea y nota correctamente
+                            $('#id_calificaciones').append('<option value="' + calificacion.id + '">' + calificacion.tarea + ' - ' + calificacion.nota + '</option>');
+                        });
+                    } else {
+                        alert('No se encontraron calificaciones para esta clase y estudiante.');
+                    }
+                }).fail(function () {
+                    alert('Error al obtener las calificaciones.');
+                });
+            } else {
+                $('#id_calificaciones').empty().append('<option value="">Seleccione Calificaciones</option>');
+            }
+        });
+
+        $("#frm_nuevo_reporte").validate({
+            rules: {
+                estudiante: { required: true },
+                clase: { required: true },
+                'calificaciones[]': { required: true }  // Cambio 5: Actualizar nombre del campo
+            },
+            messages: {
+                estudiante: { required: "Por favor, seleccione un estudiante." },
+                clase: { required: "Por favor, seleccione una clase." },
+                'calificaciones[]': { required: "Por favor, seleccione al menos una calificación." }
+            },
+            errorElement: "div",
+            errorClass: "text-danger"
+        });
+
+        // El resto del código permanece igual
+        $('frm_nuevo_reporte').submit(function (e) {
+            e.preventDefault();
+
+            if ($(this).valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/guardarReporte/',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        alert('Reporte guardado exitosamente');
+                        window.location.href = '/listaReportes/';
+                    },
+                    error: function () {
+                        alert('Error al guardar el reporte');
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

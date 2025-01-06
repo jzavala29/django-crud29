@@ -1,0 +1,82 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Ingreso de Asistencia</h3>
+    <form action="/guardarAsistencia/" method="post" id="frm_nueva_asistencia">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_estudiante" class="form-label"><b>Estudiante:</b></label>
+            <select class="form-control" name="select_estudiante" id="id_estudiante" required>
+                <option value="" selected disabled>Seleccione un estudiante</option>
+                {% for estudiante in estudiantes %}
+                    <option value="{{ estudiante.id }}">{{ estudiante.nombre }} {{ estudiante.apellido }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="id_clase" class="form-label"><b>Clase:</b></label>
+            <select class="form-control" name="select_clase" id="id_clase" required>
+                <option value="">Seleccione una Clase</option>
+                {% for clase in clases %}
+                    <option value="{{ clase.id }}">{{ clase.nombre }} </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="id_fecha" class="form-label"><b>Fecha:</b></label>
+            <input type="date" class="form-control" name="txt_fecha" id="id_fecha" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_presente" class="form-label"><b>¿Presente?</b></label>
+            <select class="form-control" name="select_presente" id="id_presente" required>
+                <option value="True">Sí</option>
+                <option value="False">No</option>
+            </select>
+        </div>
+      
+        <center>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a href="/listaAsistencias/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+
+<script>
+    // Evento para actualizar dinámicamente las clases y notas según el estudiante seleccionado
+    document.getElementById('id_estudiante').addEventListener('change', function () {
+        const estudianteId = this.value; // Obtener el ID del estudiante seleccionado
+
+        if (estudianteId) {
+            // Realizar una solicitud AJAX para obtener las clases y notas del estudiante
+            fetch(`/obtener_datos_estudiante/${estudianteId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar las opciones del selector de clases
+                    const claseSelect = document.getElementById('id_clase');
+                    claseSelect.innerHTML = '<option value="" selected disabled>Seleccione una clase</option>';
+                    data.clases.forEach(clase => {
+                        const option = document.createElement('option');
+                        option.value = clase.id;
+                        option.textContent = clase.nombre;
+                        claseSelect.appendChild(option);
+                    });
+
+                    // Mostrar las notas del estudiante
+                    const notasDiv = document.getElementById('notas');
+                    notasDiv.innerHTML = '<h5>Notas:</h5>';
+                    if (data.notas.length > 0) {
+                        data.notas.forEach(nota => {
+                            const p = document.createElement('p');
+                            p.textContent = `Clase: ${nota.clase__nombre}, Nota: ${nota.valor}`;
+                            notasDiv.appendChild(p);
+                        });
+                    } else {
+                        notasDiv.innerHTML += '<p>No hay notas registradas.</p>';
+                    }
+                })
+                .catch(error => console.error('Error al obtener datos del estudiante:', error));
+        }
+    });
+</script>
+{% endblock %}

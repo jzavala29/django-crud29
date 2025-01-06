@@ -1,0 +1,154 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Editar Reporte</h3>
+    <form action="/procesarReporte/{{ reporte.id }}" method="post" id="frm_editar_reporte">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_estudiante" class="form-label"><b>Estudiante:</b></label>
+            <select class="form-control" name="estudiante" id="id_estudiante" required>
+                <option value="" disabled>Seleccione un Estudiante</option>
+                {% for estudiante in estudiantes %}
+                    <option value="{{ estudiante.id }}" {% if estudiante.id == estudiante_actual %}selected{% endif %}>
+                        {{ estudiante.nombre }} {{ estudiante.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_clase" class="form-label"><b>Clase:</b></label>
+            <select class="form-control" name="clase" id="id_clase" required>
+                <option value="" disabled>Seleccione una Clase</option>
+                {% for clase in clases %}
+                    <option value="{{ clase.id }}" {% if clase.id == clase_actual %}selected{% endif %}>
+                        {{ clase.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_calificaciones" class="form-label"><b>Calificaciones:</b></label>
+            <select class="form-control" name="calificaciones[]" id="id_calificaciones" multiple required>
+                <option value="">Seleccione Calificaciones</option>
+                {% for calificacion in calificaciones %}
+                    <option value="{{ calificacion.id }}" 
+                        {% if calificacion.id in calificaciones_seleccionadas %}selected{% endif %}>
+                        {{ calificacion.tarea }} - {{ calificacion.nota }}
+                    </option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">Mantenga presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples calificaciones</small>
+        </div>
+
+        <center>
+            <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            <a href="/listaReportes/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Función para cargar calificaciones
+        function cargarCalificaciones() {
+            var estudianteId = $('#id_estudiante').val();
+            var claseId = $('#id_clase').val();
+            
+            if (estudianteId && claseId) {
+                $.get('/obtener_calificaciones_por_estudiante_y_clase/', {
+                    'estudiante_id': estudianteId,
+                    'clase_id': claseId
+                }, function (data) {
+                    $('#id_calificaciones').empty();
+                    
+                    if (data.calificaciones && data.calificaciones.length > 0) {
+                        data.calificaciones.forEach(function(calificacion) {
+                            var selected = {{ calificaciones_seleccionadas|safe }}.includes(calificacion.id);
+                            $('#id_calificaciones').append(
+                                $('<option>', {
+                                    value: calificacion.id,
+                                    text: calificacion.tarea + ' - ' + calificacion.nota,
+                                    selected: selected
+                                })
+                            );
+                        });
+                    } else {
+                        $('#id_calificaciones').append('<option value="">No hay calificaciones disponibles</option>');
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error:', textStatus, errorThrown);
+                    alert('Error al cargar las calificaciones');
+                });
+            } else {
+                $('#id_calificaciones').empty().append('<option value="">Seleccione un estudiante y una clase primero</option>');
+            }
+        }
+
+        // Cargar calificaciones cuando cambie el estudiante o la clase
+        $('#id_estudiante, #id_clase').change(cargarCalificaciones);
+
+        // Cargar calificaciones iniciales si hay un estudiante y clase seleccionados
+        if ($('#id_estudiante').val() && $('#id_clase').val()) {
+            cargarCalificaciones();
+        }
+
+        // Validación del formulario
+        $("#frm_editar_reporte").validate({
+            rules: {
+                estudiante: { required: true },
+                clase: { required: true },
+                'calificaciones[]': { required: true }
+            },
+            messages: {
+                estudiante: { required: "Por favor, seleccione un estudiante." },
+                clase: { required: "Por favor, seleccione una clase." },
+                'calificaciones[]': { required: "Por favor, seleccione al menos una calificación." }
+            },
+            errorElement: "div",
+            errorClass: "text-danger"
+        });
+
+        // Envío del formulario con AJAX actualizado
+        $('#frm_editar_reporte').submit(function (e) {
+            e.preventDefault();
+
+            if ($(this).valid()) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/procesarReporte/{{ reporte.id }}',
+                    data: $(this).serialize(),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            window.location.href = response.redirect_url || '/listaReportes/';
+                        } else {
+                            alert(response.message || 'Error al guardar el reporte');
+                        }
+                    },
+                    error: function (xhr) {
+                        var message = 'Error al guardar el reporte';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
+                        alert(message);
+                    }
+                });
+            }
+        });
+
+        // Mostrar mensajes de Django si existen
+        {% if messages %}
+            {% for message in messages %}
+                alert("{{ message }}");
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+{% endblock %}

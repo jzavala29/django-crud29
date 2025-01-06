@@ -1,0 +1,72 @@
+{% extends "plantilla.html" %}
+{% load static %}
+
+{% block head %}
+<!-- Agregar CSS de Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Estilo personalizado -->
+<style>
+    .carousel-caption {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        color: #b3ec7f;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 20px;
+        text-align: right;
+        font-family: 'Roboto', sans-serif;
+        font-weight: bold;
+        font-size: 24px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .carousel-inner img {
+        width: 100%;
+        height: 600px;
+        object-fit: cover;
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<!-- Encabezado de bienvenida -->
+<div class="header-text">
+    <h1>Aplicación de Control de Asistencia y Notas Académicas</h1>
+    <p>BIENVENIDOS!! Ahora puedes empezar a Gestionar de manera facil y sencilla y llevar al dia el registro academico de los estudiantes</p>
+</div>
+
+        
+<!-- Carrusel de Imágenes -->
+<div id="carouselExample" class="carousel slide mt-4" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://i.pinimg.com/originals/83/a8/cf/83a8cfe0ed622ca4dff7af2d3ac99936.jpg" class="d-block w-100" alt="Evento 1">
+        </div>
+        <div class="carousel-item">
+            <img src="https://img.freepik.com/fotos-premium/estudiante-escribiendo-pluma-papel-aula-universitaria-mientras-esta-sentado-escritorio_781928-3512.jpg" class="d-block w-100" alt="Evento 2">
+        </div>
+        <div class="carousel-item">
+            <img src="https://vivaeducacion.com/wp-content/uploads/2023/02/aplicaciones-para-tomar-asistencia.jpg" class="d-block w-100" alt="Evento 3">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
+
+   
+
+{% endblock %}

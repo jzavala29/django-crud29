@@ -1,0 +1,67 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Editar Calificación</h3>
+    <form action="/procesarCalificacion/{{ calificacion.id }}" method="post" id="frm_editar_calificacion">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_estudiante" class="form-label"><b>Estudiante:</b></label>
+            <select class="form-control" name="select_estudiante" id="id_estudiante" required>
+                <option value="" disabled>Seleccione un estudiante</option>
+                {% for estudiante in estudiantes %}
+                    <option 
+                        value="{{ estudiante.id }}" 
+                        {% if estudiante.id == calificacion.estudiante.id %}selected{% endif %}
+                    >
+                        {{ estudiante.nombre }} {{ estudiante.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="id_clase" class="form-label"><b>Clase:</b></label>
+            <select class="form-control" name="select_clase" id="id_clase" required>
+                <option value="" disabled>Seleccione una clase</option>
+                {% for clase in clases %}
+                    <option 
+                        value="{{ clase.id }}" 
+                        {% if clase.id == calificacion.clase.id %}selected{% endif %}
+                    >
+                        {{ clase.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="id_tarea" class="form-label"><b>Tarea:</b></label>
+            <input 
+                type="text" 
+                class="form-control" 
+                name="txt_tarea" 
+                id="id_tarea" 
+                value="{{ calificacion.tarea }}" 
+                placeholder="Descripción de la tarea" 
+                required
+            >
+        </div>
+        <div class="mb-3">
+            <label for="id_nota" class="form-label"><b>Nota:</b></label>
+            <input 
+                type="number" 
+                step="0.01" 
+                class="form-control" 
+                name="txt_nota" 
+                id="id_nota" 
+                value="{{ calificacion.nota }}" 
+                placeholder="Ingrese la nota" 
+                required
+            >
+        </div>
+        <center>
+            <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            <a href="/listaCalificaciones/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+{% endblock %}

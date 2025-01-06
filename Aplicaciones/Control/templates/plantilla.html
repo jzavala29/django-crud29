@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Plataforma de Gestión de Eventos Musicales{% endblock %}</title>
+<!--Importando la cdn de jquery-->
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- Importando iziToast desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js" integrity="sha512-Zq9o+E00xhhR/7vJ49mxFNJ0KQw1E1TMWkPTxrWcnpfEFDEXgUiwJHIKit93EW/XxE31HSI5GEOW06G6BF1AtA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.css" integrity="sha512-DIW4FkYTOxjCqRt7oS9BFO+nVOwDL4bzukDyDtMO7crjUZhwpyrWBFroq+IqRe6VnJkTpRAS6nhDvf0w+wHmxg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Importando jQuery Validate -->
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<style>
+    .navbar {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    main {
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        flex: 1;
+    }
+    footer {
+        background-color: #343a40;
+        color: #ced4da;
+        padding: 10px;
+        text-align: center;
+    }
+    footer p {
+        margin: 0;
+    }
+</style>
+</head>
+<body>
+    <!-- Barra de Navegación -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Gestión Académica</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Inicio</a>
+                </li>
+                <!-- Estudiante-->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="estudiantesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Estudiantes</a>
+                    <ul class="dropdown-menu" aria-labelledby="estudiantesDropdown">
+                        <li><a class="dropdown-item" href="/nuevoEstudiante/">Registrar Estudiantes</a></li>
+                        <li><a class="dropdown-item" href="/listaEstudiantes/">Ver lista de Estudiantes</a></li>
+                    </ul>
+                </li>
+                <!-- Clase -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="claseDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clase</a>
+                    <ul class="dropdown-menu" aria-labelledby="claseDropdown">
+                        <li><a class="dropdown-item" href="/nuevaClase/">Registrar Clases</a></li>
+                        <li><a class="dropdown-item" href="/listaClases/">Ver lista de Clases</a></li>
+                    </ul>
+                </li>
+                <!-- Asistencia -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="asistenciaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Asistencia</a>
+                    <ul class="dropdown-menu" aria-labelledby="asistenciaDropdown">
+                        <li><a class="dropdown-item" href="/nuevaAsistencia/">Registrar Asistencias</a></li>
+                        <li><a class="dropdown-item" href="/listaAsistencias/">Ver lista de Asistencia</a></li>
+                    </ul>
+                </li>
+                <!-- Calificaciones -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="calificacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Calificaciones</a>
+                    <ul class="dropdown-menu" aria-labelledby="calificacionesDropdown">
+                        <li><a class="dropdown-item" href="/nuevaCalificacion/">Registrar Calificaciones</a></li>
+                        <li><a class="dropdown-item" href="/listaCalificaciones/">Ver lista de Calificaciones</a></li>
+                    </ul>
+                </li>
+                <!-- Reportes -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Reportes</a>
+                    <ul class="dropdown-menu" aria-labelledby="reportesDropdown">
+                        <li><a class="dropdown-item" href="/nuevoReporte/">Registrar Reportes</a></li>
+                        <li><a class="dropdown-item" href="/listaReportes/">Ver lista de Reportes</a></li>
+                    </ul>
+                </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Dinámico -->
+    <main class="container my-4">
+        {% block contenido %}
+        {% endblock %}
+    </main>
+
+    <!-- pie de pagina -->
+    <footer>
+        <p>&copy; 2025 Desarrollado por: jeremitho </p>
+    </footer>
+
+    <!-- Scripts adicionales que hacen la funcion de cerrar -->
+    {% block body %}
+    {% endblock %}
+
+    {% if messages %}
+{% for mensajeConfirmacion in messages %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if ("{{ mensajeConfirmacion.tags|escapejs }}" === "success") {
+                iziToast.success({
+                    title: 'OK',
+                    message: '{{ mensajeConfirmacion|escapejs }}'
+                });
+            }
+        });
+    </script>
+{% endfor %}
+{% endif %}
+<!--PARA LOS MENSAJES EN ROJO-->
+<style>
+    label.error{
+        color: red;
+        font-weight: bold;
+        background-color: red;
+        border-radius: 10px;
+        padding: 5px;
+        margin-top:5px ;
+    }
+    input.error{
+        border: 1px solid red;
+    }
+</style>
+<script>
+    jQuery.validator.addMethod("letras", function(value, element) {            
+        return this.optional(element) || /^[A-Za-zÁÉÍÓÚÑáéíóúñ ]*$/.test(value);
+       
+      }, "Este campo solo acepta letras"); 
+</script>
+
+</body>
+</html>

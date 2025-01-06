@@ -1,0 +1,36 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<!-- Título antes de la tabla -->
+<div class="container mt-4">
+    <h3 class="text-center mb-4">Lista de Estudiantes</h3>
+
+    <!-- Tabla con diseño -->
+    <table class="table table-bordered table-striped table-hover table-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre del Estudiante</th>
+                <th>Apellido</th>
+                <th>Numero de Matrícula</th>
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estudiante in estudiantes %}
+            <tr>
+                <td>{{ estudiante.id }}</td>
+                <td>{{ estudiante.nombre }}</td>
+                <td>{{ estudiante.apellido }}</td>
+                <td>{{ estudiante.matricula }}</td>
+                <td>
+                    <a href="/editarEstudiante/{{ estudiante.id }}" onclick="return confirm('¿Estás seguro que deseas editar?')" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="/eliminarEstudiante/{{ estudiante.id }}" onclick="return confirm('¿Estás seguro?')" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

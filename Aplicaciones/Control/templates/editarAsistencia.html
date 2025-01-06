@@ -1,0 +1,60 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Editar Asistencia</h3>
+    <form action="/procesarAsistencia/{{ asistencia.id }}" method="post" id="frm_editar_asistencia">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_estudiante" class="form-label"><b>Estudiante:</b></label>
+            <select class="form-control" name="select_estudiante" id="id_estudiante" required>
+                <option value="" disabled>Seleccione un estudiante</option>
+                {% for estudiante in estudiantes %}
+                    <option 
+                        value="{{ estudiante.id }}" 
+                        {% if estudiante.id == asistencia.estudiante.id %}selected{% endif %}
+                    >
+                        {{ estudiante.nombre }} {{ estudiante.apellido }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="id_clase" class="form-label"><b>Clase:</b></label>
+            <select class="form-control" name="select_clase" id="id_clase" required>
+                <option value="" disabled>Seleccione una clase</option>
+                {% for clase in clases %}
+                    <option 
+                        value="{{ clase.id }}" 
+                        {% if clase.id == asistencia.clase.id %}selected{% endif %}
+                    >
+                        {{ clase.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="id_fecha" class="form-label"><b>Fecha:</b></label>
+            <input 
+                type="date" 
+                class="form-control" 
+                name="txt_fecha" 
+                id="id_fecha" 
+                value="{{ asistencia.fecha }}" 
+                required
+            >
+        </div>
+        <div class="mb-3">
+            <label for="id_presente" class="form-label"><b>¿Presente?</b></label>
+            <select class="form-control" name="select_presente" id="id_presente" required>
+                <option value="True" {% if asistencia.presente %}selected{% endif %}>Sí</option>
+                <option value="False" {% if not asistencia.presente %}selected{% endif %}>No</option>
+            </select>
+        </div>
+        <center>
+            <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            <a href="/listaAsistencias/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+{% endblock %}

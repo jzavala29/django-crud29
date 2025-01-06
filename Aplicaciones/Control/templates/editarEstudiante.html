@@ -1,0 +1,82 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Editar Estudiante</h3>
+    <!-- Actualizamos la acción del formulario con la ruta correcta -->
+    <form action="/procesarEstudiante/{{ estudiante.id }}" method="post" id="frm_editar_estudiante">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="id_nombre" class="form-label"><b>Nombre del Estudiante:</b></label>
+            <input type="text" class="form-control" name="txt_nombre" id="id_nombre" value="{{ estudiante.nombre }}" placeholder="Nombre del estudiante" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_apellido" class="form-label"><b>Apellido del Estudiante:</b></label>
+            <input type="text" class="form-control" name="txt_apellido" id="id_apellido" value="{{ estudiante.apellido }}" placeholder="Apellido del estudiante" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_matricula" class="form-label"><b>Matrícula:</b></label>
+            <input type="text" class="form-control" name="txt_matricula" id="id_matricula" value="{{ estudiante.matricula }}" placeholder="Número de matrícula" required>
+        </div>
+        
+        <center>
+            <button type="submit" class="btn btn-success">Guardar Cambios</button>
+            <a href="/listaEstudiantes/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+
+<!-- Script para validar el formulario con jQuery -->
+<script>
+    // Método personalizado para validar solo letras
+    jQuery.validator.addMethod("soloLetras", function(value, element) {
+        return this.optional(element) || /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value);
+    }, "Solo se permiten letras y espacios.");
+
+    $(document).ready(function () {
+        $("#frm_editar_estudiante").validate({
+            rules: {
+                txt_nombre: {
+                    required: true,
+                    soloLetras: true,
+                    minlength: 3
+                },
+                txt_apellido: {
+                    required: true,
+                    soloLetras: true,
+                    minlength: 3
+                },
+                txt_matricula: {
+                    required: true,
+                    minlength: 6
+                }
+            },
+            messages: {
+                txt_nombre: {
+                    required: "Por favor, ingrese el nombre del estudiante.",
+                    soloLetras: "El nombre solo debe contener letras.",
+                    minlength: "Debe tener al menos 3 caracteres."
+                },
+                txt_apellido: {
+                    required: "Por favor, ingrese el apellido del estudiante.",
+                    soloLetras: "El apellido solo debe contener letras.",
+                    minlength: "Debe tener al menos 3 caracteres."
+                },
+                txt_matricula: {
+                    required: "Por favor, ingrese la matrícula del estudiante.",
+                    minlength: "La matrícula debe tener al menos 6 caracteres."
+                }
+            },
+            errorElement: "div",
+            errorClass: "text-danger",
+            highlight: function (element) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function (element) {
+                $(element).removeClass("is-invalid").addClass("is-valid");
+            }
+        });
+    });
+</script>
+{% endblock %}

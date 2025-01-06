@@ -1,0 +1,40 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h3 class="text-center mb-4">Reportes Generados</h3>
+
+
+    <div class="text-center mb-4">
+        <a href="/agregarReporte/" class="btn btn-primary">Agregar Nuevo Reporte</a>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover table-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Estudiante</th>
+                <th>Clase</th>
+                <th>Promedio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reporte in reportes %}
+            <tr>
+                <td>{{ reporte.id }}</td>
+                <td>{{ reporte.estudiante.nombre }} {{ reporte.estudiante.apellido }}</td>
+                <td>{{ reporte.clase.nombre }}</td>
+                <td>{{ reporte.promedio }}</td>
+                <td>{{ reporte.estado }}</td>
+                <td>
+                    <a href="/editarReporte/{{ reporte.id }}" onclick="return confirm('¿Estás seguro que deseas editar?')" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="/eliminarReporte/{{ reporte.id }}" onclick="return confirm('¿Estás seguro?')" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

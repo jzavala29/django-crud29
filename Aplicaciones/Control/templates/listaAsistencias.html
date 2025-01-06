@@ -1,0 +1,36 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <h3 class="text-center mb-4">Lista de Asistencia</h3>
+
+
+    <table class="table table-bordered table-striped table-hover table-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Estudiante</th>
+                <th>Clase</th>
+                <th>Fecha</th>
+                <th>Presente</th>
+                <th>Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asistencia in asistencias %}
+            <tr>
+                <td>{{ asistencia.id }}</td>
+                <td>{{ asistencia.estudiante.nombre }} {{ asistencia.estudiante.apellido }}</td>
+                <td>{{ asistencia.clase.nombre }}</td>
+                <td>{{ asistencia.fecha }}</td>
+                <td>{{ asistencia.presente|yesno:"Sí,No" }}</td>
+                <td>
+                    <a href="/editarAsistencia/{{ asistencia.id }}" onclick="return confirm('¿Estás seguro que deseas editar?')" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="/eliminarAsistencia/{{ asistencia.id }}" onclick="return confirm('¿Estás seguro?')" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

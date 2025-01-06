@@ -1,0 +1,45 @@
+{% extends "./plantilla.html" %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Agregar Docentes</h3>
+    <form action="/guardarDocente/" method="post" id="frm_nuevo_docente">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_nombre" class="form-label"><b>Nombre:</b></label>
+            <input type="text" class="form-control" name="txt_nombre" id="id_nombre" placeholder="Nombre del docente" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_apellido" class="form-label"><b>Apellido:</b></label>
+            <input type="text" class="form-control" name="txt_apellido" id="id_apellido" placeholder="Apellido del docente" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_email" class="form-label"><b>Email:</b></label>
+            <input type="email" class="form-control" name="txt_email" id="id_email" placeholder="Correo electrónico del docente" required>
+        </div>
+        <center>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a href="/listaDocentes/" class="btn btn-danger">Cancelar</a>
+        </center>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#frm_nuevo_docente").validate({
+            rules: {
+                txt_nombre: { required: true, minlength: 3 },
+                txt_apellido: { required: true, minlength: 3 },
+                txt_email: { required: true, email: true }
+            },
+            messages: {
+                txt_nombre: { required: "Por favor, ingrese el nombre.", minlength: "Debe tener al menos 3 caracteres." },
+                txt_apellido: { required: "Por favor, ingrese el apellido.", minlength: "Debe tener al menos 3 caracteres." },
+                txt_email: { required: "Por favor, ingrese un correo válido.", email: "El formato debe ser un correo electrónico válido." }
+            },
+            errorElement: "div",
+            errorClass: "text-danger"
+        });
+    });
+</script>
+{% endblock %}
